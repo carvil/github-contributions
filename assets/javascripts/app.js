@@ -75,6 +75,7 @@ App.contributionController = Ember.ArrayController.create({
 // Views
 App.SearchUserView = Ember.TextField.extend({
   insertNewline: function() {
+    App.contributionController.set("error",null);
     var value = this.get('value');
     if (value) {
       App.contributionController.fetchUserContributions(value);
@@ -84,6 +85,7 @@ App.SearchUserView = Ember.TextField.extend({
 });
 
 App.errorView = Ember.View.extend({
+  errorBinding: "App.contributionController.error",
   template: Ember.Handlebars.compile("{{error}}")
 });
 
