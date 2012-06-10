@@ -20,7 +20,7 @@ App.contributionController = Ember.ArrayController.create({
       if(this.get("content").length == 0)
         this.set("message","Couldn't find any contributions...");
       else
-        this.set("message","Done.");
+        this.set("message","Done");
     }
   }.observes("forks"),
 
