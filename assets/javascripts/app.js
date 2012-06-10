@@ -12,17 +12,20 @@ App.Contribution = Ember.Object.extend({
 // Controllers
 App.contributionController = Ember.ArrayController.create({
   content: [],
-  error: null,
+  message: null,
   forks: null,
 
   forksChanged: function() {
-    if(this.get("forks") == 0 && this.get("content").length == 0) {
-      this.set("error","Couldn't find any contributions...");
+    if(this.get("forks") == 0) {
+      if(this.get("content").length == 0)
+        this.set("message","Couldn't find any contributions...");
+      else
+        this.set("message","Done.");
     }
   }.observes("forks"),
 
   createContribution: function(project_data) {
-    this.clearErrors();
+    this.clearMessages();
     var contribution = App.Contribution.create(project_data);
     this.pushObject(contribution);
   },
@@ -31,8 +34,8 @@ App.contributionController = Ember.ArrayController.create({
     this.set("content", []);
   },
 
-  clearErrors: function() {
-    this.set("error", null);
+  clearMessages: function() {
+    this.set("message", null);
   },
 
   // Searches the username in the list of contributors of a given cloned project
@@ -83,13 +86,13 @@ App.contributionController = Ember.ArrayController.create({
           });
         }
         else
-          App.contributionController.set("error","The user " + username + " didn't fork a repo yet!");
+          self.set("message","The user " + username + " didn't fork a repo yet!");
       },
       error: function(e) {
         if(e.status == 404)
-          App.contributionController.set("error","Oops... It appears that the user '" + username + "' doesn't exist...");
+          self.set("message","Oops... It appears that the user '" + username + "' doesn't exist...");
         else
-          App.contributionController.set("error","Oops... something went wrong, plesse try again!");
+          self.set("message","Oops... something went wrong, plesse try again!");
       },
       dataType: "json"
     });
@@ -104,7 +107,7 @@ App.contributionController = Ember.ArrayController.create({
 App.SearchUserView = Ember.TextField.extend({
   insertNewline: function() {
     App.contributionController.clearContributions();
-    App.contributionController.set("error","searching");
+    App.contributionController.set("message","searching");
     var value = this.get('value');
     if (value) {
       App.contributionController.fetchUserContributions(value);
@@ -113,10 +116,10 @@ App.SearchUserView = Ember.TextField.extend({
   }
 });
 
-// Display errors based on the controller's error property
-App.errorView = Ember.View.extend({
-  errorBinding: "App.contributionController.error",
-  template: Ember.Handlebars.compile("{{error}}")
+// Display messages based on the controller's message property
+App.messageView = Ember.View.extend({
+  messageBinding: "App.contributionController.message",
+  template: Ember.Handlebars.compile("{{message}}")
 });
 
 // Display the contribution links based on the array of
