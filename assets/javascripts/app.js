@@ -15,12 +15,17 @@ App.contributionController = Ember.ArrayController.create({
   error: null,
 
   createContribution: function(project_data) {
+    this.clearErrors();
     var contribution = App.Contribution.create(project_data);
     this.pushObject(contribution);
   },
 
   clearContributions: function() {
     this.set("content", []);
+  },
+
+  clearErrors: function() {
+    this.set("error", null);
   },
 
   fetchContributions: function(username, clone_uri, project_data) {
@@ -54,10 +59,14 @@ App.contributionController = Ember.ArrayController.create({
     $.ajax({
       url: "https://api.github.com/users/" + username + "/repos",
       success: function(data) {
-        data.forEach(function(repo) {
-          if(repo.fork)
+        forks = data.filter(function(repo) { return (repo.fork == true);});
+        if(forks.length) {
+          forks.forEach(function(repo) {
             self.fetchCloneRepo(username, repo);
-        });
+          });
+        }
+        else
+          App.contributionController.set("error","The user " + username + " didn't fork a repo yet!");
       },
       error: function(e) {
         if(e.status == 404)
@@ -75,7 +84,8 @@ App.contributionController = Ember.ArrayController.create({
 // Views
 App.SearchUserView = Ember.TextField.extend({
   insertNewline: function() {
-    App.contributionController.set("error",null);
+    App.contributionController.clearContributions();
+    App.contributionController.set("error","searching");
     var value = this.get('value');
     if (value) {
       App.contributionController.fetchUserContributions(value);
@@ -87,10 +97,6 @@ App.SearchUserView = Ember.TextField.extend({
 App.errorView = Ember.View.extend({
   errorBinding: "App.contributionController.error",
   template: Ember.Handlebars.compile("{{error}}")
-});
-
-App.SearchingView = Ember.View.extend({
-  template: Ember.Handlebars.compile("<p>no contributions yet</p>")
 });
 
 App.contributionView = Ember.View.extend({
