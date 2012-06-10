@@ -13,6 +13,13 @@ App.Contribution = Ember.Object.extend({
 App.contributionController = Ember.ArrayController.create({
   content: [],
   error: null,
+  forks: null,
+
+  forksChanged: function() {
+    if(this.get("forks") == 0 && this.get("content").length == 0) {
+      this.set("error","Couldn't find any contributions...");
+    }
+  }.observes("forks"),
 
   createContribution: function(project_data) {
     this.clearErrors();
@@ -28,20 +35,28 @@ App.contributionController = Ember.ArrayController.create({
     this.set("error", null);
   },
 
+  // Searches the username in the list of contributors of a given cloned project
+  // If the username is found, a new contributor object is created.
   fetchContributions: function(username, clone_uri, project_data) {
     var self = this;
     $.ajax({
       url: "https://api.github.com/repos/" + clone_uri + "/contributors",
       success: function(data) {
-        data.forEach(function(contributor) {
+        data.forEach(function(contributor, index, array) {
           if(contributor.login == username)
             App.contributionController.createContribution(project_data);
+          if(index == (array.length-1)) {
+            var old_forks = self.get('forks');
+            self.set("forks",old_forks-1);
+          }
         });
       },
       dataType: "json"
     });
   },
 
+  // Given a username and a repo, fetch the clone repo and proceeds with checking the
+  // contributors' list
   fetchCloneRepo: function(username, repo) {
     var self = this;
     $.ajax({
@@ -54,13 +69,15 @@ App.contributionController = Ember.ArrayController.create({
     });
   },
 
+  // Fetch the user repos and for each fork, proceed with the searching for contributions
   fetchUserContributions: function(username) {
     var self = this;
     $.ajax({
       url: "https://api.github.com/users/" + username + "/repos",
       success: function(data) {
-        forks = data.filter(function(repo) { return (repo.fork == true);});
+        var forks = data.filter(function(repo) { return (repo.fork == true);});
         if(forks.length) {
+          self.set("forks", forks.length);
           forks.forEach(function(repo) {
             self.fetchCloneRepo(username, repo);
           });
@@ -82,6 +99,8 @@ App.contributionController = Ember.ArrayController.create({
 
 
 // Views
+
+// View responsible for the text field and handling the value
 App.SearchUserView = Ember.TextField.extend({
   insertNewline: function() {
     App.contributionController.clearContributions();
@@ -94,16 +113,20 @@ App.SearchUserView = Ember.TextField.extend({
   }
 });
 
+// Display errors based on the controller's error property
 App.errorView = Ember.View.extend({
   errorBinding: "App.contributionController.error",
   template: Ember.Handlebars.compile("{{error}}")
 });
 
+// Display the contribution links based on the array of
+// contributions from the controller
 App.contributionView = Ember.View.extend({
   urlBinding: "content.project_url",
   template: Ember.Handlebars.compile('<a target="blank" {{ bindAttr href="url" }}>{{content.project_name}}</a>')
 });
 
+// Handle the list of contributions
 App.contributionsView = Ember.CollectionView.extend({
   content: App.contributionController,
   tagName: "ul",
