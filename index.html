@@ -19,6 +19,11 @@
             {{view App.contributionsView id="contributions"}}
           </script>
         </div>
+        <div id="error-list">
+          <script type="text/x-handlebars">
+            {{view App.errorView errorBinding="App.contributionController.error" id="errors"}}
+          </script>
+        </div>
       </div>
     <script type="text/javascript" src="./assets/javascripts/app.js"></script>
   </body>
