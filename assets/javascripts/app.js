@@ -16,6 +16,10 @@ App.contributionController = Ember.ArrayController.create({
   createContribution: function(project_name, project_url) {
     var contribution = App.Contribution.create({ project_name: project_name, project_url: project_url });
     this.pushObject(contribution);
+  },
+
+  clearContributions: function() {
+    this.set("content", []);
   }
 
 });
