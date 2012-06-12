@@ -3,26 +3,61 @@
   <head>
     <title>Open-source contributions</title>
     <link rel="stylesheet" href="./assets/stylesheets/style.css" type="text/css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="./vendor/stylesheets/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="./vendor/stylesheets/bootstrap-responsive.min.css" type="text/css" media="screen" charset="utf-8">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script type="text/javascript" src="./vendor/ember-0.9.8.1.min.js"></script>
+    <script type="text/javascript" src="./vendor/javascripts/ember-0.9.8.1.min.js"></script>
+    <script type="text/javascript" src="./vendor/javascripts/bootstrap.min.js"></script>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="http://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
   </head>
   <body>
-      <div id="container">
-        <div id="github-username">
-          <script type="text/x-handlebars">
-            {{view App.SearchUserView id="new-username" placeholder="github username"}}
-          </script>
-        </div>
-        <div id="contributions-list">
-          <script type="text/x-handlebars">
-            {{view App.contributionsView id="contributions"}}
-          </script>
-        </div>
-        <div id="message-list">
-          <script type="text/x-handlebars">
-            {{view App.messageView id="messages"}}
-          </script>
-        </div>
+      <div class="container">
+        <header class="jumbotron masthead">
+          <div class="inner">
+            <h1>Contributions on github</h1>
+
+            <p>Add your github username below</p>
+
+            <p>
+              <script type="text/x-handlebars">
+                {{view App.SearchUserView id="new-username" placeholder="github username"}}
+              </script>
+            </p>
+
+            <div id="contributions-list">
+              <script type="text/x-handlebars">
+                {{view App.contributionsView id="contributions"}}
+              </script>
+            </div>
+
+            <div class="bs-links">
+
+              <ul class="quick-links">
+                <div id="message-list">
+                  <script type="text/x-handlebars">
+                    {{view App.messageView id="messages"}}
+                  </script>
+                </div>
+              </ul>
+
+              <ul class="quick-links">
+                <li>
+                  <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=carvil&amp;repo=github-contributions&amp;type=watch&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="112px" height="20px"></iframe>
+                </li>
+                <li>
+                  <iframe class="github-btn" src="http://markdotto.github.com/github-buttons/github-btn.html?user=carvil&amp;repo=github-contributions&amp;type=fork&amp;count=true" allowtransparency="true" frameborder="0" scrolling="0" width="98px" height="20px"></iframe>
+                </li>
+                <li class="tweet-btn">
+                  <a href="https://twitter.com/share" class="twitter-share-button" data-text="Check out your github contributions" data-via="carvil_" data-hashtags="emberjsgithub">Tweet</a>
+                </li>
+                <li class="follow-btn">
+                  <a href="https://twitter.com/carvil_" class="twitter-follow-button" data-show-count="false">Follow @carvil_</a>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </header>
       </div>
     <script type="text/javascript" src="./assets/javascripts/app.js"></script>
   </body>
