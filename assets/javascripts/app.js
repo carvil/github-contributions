@@ -120,7 +120,7 @@ App.SearchUserView = Ember.TextField.extend({
 // Display messages based on the controller's message property
 App.messageView = Ember.View.extend({
   messageBinding: "App.contributionController.message",
-  template: Ember.Handlebars.compile("{{message}}")
+  template: Ember.Handlebars.compile("{{#if message}}<div class='alert alert-info'>{{message}}</div>{{/if}}")
 });
 
 // Display the contribution links based on the array of
