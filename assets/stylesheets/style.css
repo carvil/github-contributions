@@ -14,6 +14,16 @@ body {
   background-image: url(../images/background.png);
 }
 
+.octocat {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.copyright {
+  text-align: center;
+}
+
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
 .navbar-fixed-top .brand {
