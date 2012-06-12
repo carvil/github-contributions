@@ -105,6 +105,7 @@ App.contributionController = Ember.ArrayController.create({
 
 // View responsible for the text field and handling the value
 App.SearchUserView = Ember.TextField.extend({
+  classNames: ["span3"],
   insertNewline: function() {
     App.contributionController.clearContributions();
     App.contributionController.set("message","searching");
