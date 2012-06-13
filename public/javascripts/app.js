@@ -42,20 +42,27 @@ App.contributionController = Ember.ArrayController.create({
   // If the username is found, a new contributor object is created.
   fetchContributions: function(username, clone_uri, project_data) {
     var self = this;
-    $.ajax({
-      url: "https://api.github.com/repos/" + clone_uri + "/contributors",
-      crossDomain: true,
-      success: function(data) {
-        data.forEach(function(contributor, index, array) {
-          if(contributor.login == username)
-            App.contributionController.createContribution(project_data);
-          if(index == (array.length-1)) {
-            var old_forks = self.get('forks');
-            self.set("forks",old_forks-1);
-          }
-        });
-      },
-      dataType: "json"
+
+    $.getJSON("https://api.github.com/repos/" + clone_uri + "/contributors" + "?callback=?", function(data){
+      switch(data.meta.status) {
+        case 200:
+          var contributors = data.data;
+          contributors.forEach(function(contributor, index, array) {
+            if(contributor.login == username)
+              App.contributionController.createContribution(project_data);
+            if(index == (array.length-1)) {
+              var old_forks = self.get('forks');
+              self.set("forks",old_forks-1);
+            }
+          });
+          break;
+        case 404:
+          self.set("message","Oops... Couldn't find the contributors of '" + clone_uri);
+          break;
+        default:
+          self.set("message","Oops... something went wrong, plesse try again!");
+          break;
+      }
     });
   },
 
@@ -63,41 +70,47 @@ App.contributionController = Ember.ArrayController.create({
   // contributors' list
   fetchCloneRepo: function(username, repo) {
     var self = this;
-    $.ajax({
-      url: "https://api.github.com/repos/" + repo.full_name,
-      crossDomain: true,
-      success: function(data) {
-        var clone_uri = data.parent.full_name;
-        self.fetchContributions(username, clone_uri, {project_name: data.parent.full_name, project_url: data.parent.html_url});
-      },
-      dataType: "json"
+    $.getJSON("https://api.github.com/repos/" + repo.full_name + "?callback=?", function(data){
+      switch(data.meta.status) {
+        case 200:
+          var repo = data.data;
+          var clone_uri = repo.parent.full_name;
+          self.fetchContributions(username, clone_uri, {project_name: repo.parent.full_name, project_url: repo.parent.html_url});
+          break;
+        case 404:
+          self.set("message","Oops... Couldn't find repo '" + repo.full_name);
+          break;
+        default:
+          self.set("message","Oops... something went wrong, plesse try again!");
+          break;
+      }
     });
   },
 
   // Fetch the user repos and for each fork, proceed with the searching for contributions
   fetchUserContributions: function(username) {
     var self = this;
-    $.ajax({
-      url: "https://api.github.com/users/" + username + "/repos",
-      crossDomain: true,
-      success: function(data) {
-        var forks = data.filter(function(repo) { return (repo.fork == true);});
-        if(forks.length) {
-          self.set("forks", forks.length);
-          forks.forEach(function(repo) {
-            self.fetchCloneRepo(username, repo);
-          });
-        }
-        else
-          self.set("message","The user " + username + " didn't fork a repo yet!");
-      },
-      error: function(e) {
-        if(e.status == 404)
+    $.getJSON("https://api.github.com/users/" + username + "/repos" + "?callback=?", function(data){
+      switch(data.meta.status) {
+        case 200:
+          var user_repos = data.data;
+          var forks = user_repos.filter(function(repo) { return (repo.fork == true);});
+            if(forks.length) {
+              self.set("forks", forks.length);
+              forks.forEach(function(repo) {
+                self.fetchCloneRepo(username, repo);
+              });
+            }
+            else
+              self.set("message","The user " + username + " didn't fork a repo yet!");
+          break;
+        case 404:
           self.set("message","Oops... It appears that the user '" + username + "' doesn't exist...");
-        else
+          break;
+        default:
           self.set("message","Oops... something went wrong, plesse try again!");
-      },
-      dataType: "json"
+          break;
+      }
     });
   }
 
