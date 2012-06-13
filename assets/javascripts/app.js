@@ -123,20 +123,19 @@ App.SearchUserView = Ember.TextField.extend({
 // Display messages based on the controller's message property
 App.messageView = Ember.View.extend({
   messageBinding: "App.contributionController.message",
-  template: Ember.Handlebars.compile("{{#if message}}<div class='alert alert-info'>{{message}}</div>{{/if}}")
+  template: Ember.Handlebars.compile("{{#if message}}<div class='row'><div class='span6 offset3'><div class='alert alert-info'>{{message}}</div></div></div>{{/if}}")
 });
 
 // Display the contribution links based on the array of
 // contributions from the controller
 App.contributionView = Ember.View.extend({
   urlBinding: "content.project_url",
-  template: Ember.Handlebars.compile('<a target="blank" {{ bindAttr href="url" }}>{{content.project_name}}</a>')
+  template: Ember.Handlebars.compile('<div class="row show-grid"><div class="span6 offset3"><a target="blank" {{ bindAttr href="url" }}><h3>{{content.project_name}}</h3></a><div></div>')
 });
 
 // Handle the list of contributions
 App.contributionsView = Ember.CollectionView.extend({
   content: App.contributionController,
-  tagName: "ul",
   emptyView: App.SearchingView,
   itemViewClass: App.contributionView
 });

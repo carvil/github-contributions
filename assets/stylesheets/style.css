@@ -850,3 +850,11 @@ form.well {
   }
 
 }
+
+a {
+  color: #969696;
+}
+
+#message-list {
+  text-align: center;
+}

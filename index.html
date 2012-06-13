@@ -2,9 +2,9 @@
 <html>
   <head>
     <title>Open-source contributions</title>
-    <link rel="stylesheet" href="./assets/stylesheets/style.css" type="text/css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="./vendor/stylesheets/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
     <link rel="stylesheet" href="./vendor/stylesheets/bootstrap-responsive.min.css" type="text/css" media="screen" charset="utf-8">
+    <link rel="stylesheet" href="./assets/stylesheets/style.css" type="text/css" media="screen" charset="utf-8">
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="./vendor/javascripts/ember-0.9.8.1.min.js"></script>
     <script type="text/javascript" src="./vendor/javascripts/bootstrap.min.js"></script>
@@ -39,15 +39,13 @@
               </script>
             </div>
 
-            <div class="bs-links">
+            <div id="message-list">
+              <script type="text/x-handlebars">
+                {{view App.messageView id="messages"}}
+              </script>
+            </div>
 
-              <ul class="quick-links">
-                <div id="message-list">
-                  <script type="text/x-handlebars">
-                    {{view App.messageView id="messages"}}
-                  </script>
-                </div>
-              </ul>
+            <div class="bs-links">
 
               <ul class="quick-links">
                 <li>
