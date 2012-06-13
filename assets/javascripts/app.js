@@ -44,6 +44,7 @@ App.contributionController = Ember.ArrayController.create({
     var self = this;
     $.ajax({
       url: "https://api.github.com/repos/" + clone_uri + "/contributors",
+      crossDomain: true,
       success: function(data) {
         data.forEach(function(contributor, index, array) {
           if(contributor.login == username)
@@ -64,6 +65,7 @@ App.contributionController = Ember.ArrayController.create({
     var self = this;
     $.ajax({
       url: "https://api.github.com/repos/" + repo.full_name,
+      crossDomain: true,
       success: function(data) {
         var clone_uri = data.parent.full_name;
         self.fetchContributions(username, clone_uri, {project_name: data.parent.full_name, project_url: data.parent.html_url});
@@ -77,6 +79,7 @@ App.contributionController = Ember.ArrayController.create({
     var self = this;
     $.ajax({
       url: "https://api.github.com/users/" + username + "/repos",
+      crossDomain: true,
       success: function(data) {
         var forks = data.filter(function(repo) { return (repo.fork == true);});
         if(forks.length) {
